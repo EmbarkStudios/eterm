@@ -138,7 +138,7 @@ impl Client {
     /// Retrieved new events, and gives back what to do.
     ///
     /// Return `None` when there is nothing new.
-    pub fn update(&mut self, pixels_per_point: f32) -> Option<EguiFrame> {
+    pub fn update(&mut self, ctx: &egui::Context, pixels_per_point: f32) -> Option<EguiFrame> {
         if self.fonts.is_none() {
             self.fonts = Some(Fonts::new(pixels_per_point, self.font_definitions.clone()));
         }
@@ -161,16 +161,10 @@ impl Client {
                 } => {
                     let clipped_shapes =
                         crate::net_shape::from_clipped_net_shapes(fonts, clipped_net_shapes);
-                    let tesselator_options =
-                        egui::epaint::tessellator::TessellationOptions::from_pixels_per_point(
-                            pixels_per_point,
-                        );
-                    let tex_size = fonts.font_image().size();
-                    let clipped_meshes = egui::epaint::tessellator::tessellate_shapes(
-                        clipped_shapes,
-                        tesselator_options,
-                        tex_size,
-                    );
+
+                        let clipped_meshes = ctx.tessellate(clipped_shapes);
+
+                    
 
                     let latest_frame = self.latest_frame.get_or_insert_with(EguiFrame::default);
                     latest_frame.frame_index = frame_index;

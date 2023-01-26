@@ -67,6 +67,7 @@
 #![allow(clippy::float_cmp)]
 #![allow(clippy::manual_range_contains)]
 
+use egui_glium::EguiGlium;
 use eterm::EguiFrame;
 use glium::glutin;
 
@@ -106,6 +107,8 @@ fn main() {
     let mut needs_repaint = true;
     let mut last_repaint = std::time::Instant::now();
 
+    egui_glium.egui_ctx.run(Default::default(), |_| {});
+    
     event_loop.run(move |event, _, control_flow| {
         let mut redraw = || {
             let raw_input = egui_glium
@@ -125,8 +128,9 @@ fn main() {
                 needs_repaint = true;
             }
 
+ 
             let pixels_per_point = egui_glium.egui_winit.pixels_per_point();
-            if let Some(frame) = client.update(pixels_per_point) {
+            if let Some(frame) = client.update(&egui_glium.egui_ctx, pixels_per_point) {
                 // We got something new from the server!
                 let EguiFrame {
                     frame_index: _,
