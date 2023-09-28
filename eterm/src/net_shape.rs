@@ -62,8 +62,8 @@ pub struct ClippedNetShape(Rect, NetShape);
 
 pub fn to_clipped_net_shapes(in_shapes: Vec<ClippedShape>) -> Vec<ClippedNetShape> {
     let mut net_shapes = vec![];
-    for epaint::ClippedShape(rect, shape) in in_shapes {
-        to_net_shapes(rect, shape, &mut net_shapes)
+    for epaint::ClippedShape{clip_rect, shape} in in_shapes {
+        to_net_shapes(clip_rect, shape, &mut net_shapes)
     }
     net_shapes
 }
@@ -155,7 +155,7 @@ pub fn from_clipped_net_shapes(
     in_shapes
         .into_iter()
         .map(|ClippedNetShape(clip_rect, net_shape)| {
-            epaint::ClippedShape(clip_rect, to_epaint_shape(fonts, net_shape))
+            epaint::ClippedShape {clip_rect, shape: to_epaint_shape(fonts, net_shape)}
         })
         .collect()
 }
